@@ -50,9 +50,9 @@ dist-ssr
 
 
 # Python project 
-./backend/**/__pycache__
+**/__pycache__
 db.sqlite3
-./backend/**/migrations
+**/migrations
 
 .venv/
 
