@@ -50,6 +50,10 @@ dist-ssr
 
 
 # Python project 
-./backend/./__pycache__
-./backend/db.sqlite3
-./backend/./migrations
+./backend/**/__pycache__
+db.sqlite3
+./backend/**/migrations
+
+.venv/
+
+.env
