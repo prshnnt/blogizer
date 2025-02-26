@@ -1,2 +1,2 @@
-echo off
+@echo off
 ".\.venv\Scripts\activate.bat" 

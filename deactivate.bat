@@ -1,2 +1,2 @@
-echo off
-".\.venv\Scripts\deactivate.bat" 
+@echo off
+".\.venv\Scripts\deactivate.bat"
