@@ -21,7 +21,7 @@ def user_doesnot_exist(username:str,email:str)-> bool:
         return True
     
 def get_token(request:HttpRequest):
-    token =  request.headers.get('Bearer',None)
+    token =  request.COOKIES.get('Bearer',None)
     try:
         return Token.objects.get(authToken=token)
     except Token.DoesNotExist:

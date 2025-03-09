@@ -55,7 +55,7 @@ def signup(request:HttpRequest):
 @csrf_exempt
 def login(request:HttpRequest):
     if request.method=="POST":
-        response = {}
+        content = Response()
         try:
             data = json.loads(request.body)
             username:str = data.get('username')
@@ -66,28 +66,39 @@ def login(request:HttpRequest):
                     # add a logging function in case token does not exist for some user 
                     # then there must be some error with signal function or internal error
                     authToken = Token.objects.get(user=user).authToken
-                    response[STATUS]=SUCCESS
-                    response['authToken']=authToken
+                    content.success().put_detail('Logged In!')
+                    response = JsonResponse(content.response_dict())
+                    response.set_cookie(
+                        key="Bearer",
+                        value=authToken,
+                        httponly=True,
+                        secure=True,
+                        samesite="Strict",
+                        max_age=3600
+                    )
+                    response.status_code = 200
+                    return response
                 else:
-                    response[STATUS]=FAILED
-                    response[DETAILS]="Wrong Password!"
+                    content.failed().put_detail("Wrong Password")
+    
             except User.DoesNotExist:
-                response[DETAILS]='Invalid! Username'
-                response[STATUS]=FAILED
+                content.failed().put_detail('Invalid! Username')
+
             except Token.DoesNotExist:
-                response[STATUS]=FAILED
-                response[DETAILS]="Token DoesNotExist"
+                content.failed().put_detail("Token DoesNotExist")
+
         except json.JSONDecodeError as err:
-            response[DETAILS]=str(err)
-            response[STATUS]=FAILED
+            content.failed().put_detail(str(err))
         except Exception as err:
-            response[DETAILS]=str(err)
-        return JsonResponse(response,status=200 if response[STATUS]==SUCCESS else 404)
+            content.failed().put_detail(str(err))
+        return JsonResponse(content.response_dict())
     else:
         return JsonResponse(
-            {
-                STATUS:FAILED,
-                DETAILS:'Autherisation Failed: Invalid Request'
-            },
+            Response().failed().put_detail('Autherisation Failed: Invalid Request').response_dict(),
             status=404
         )
+
+def logout(request:HttpRequest):
+    response = JsonResponse(Response().success().put_detail('Logged Out!').response_dict())
+    response.delete_cookie('Bearer')
+    return response
