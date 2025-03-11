@@ -73,7 +73,7 @@ def login(request:HttpRequest):
                         value=authToken,
                         httponly=True,
                         secure=True,
-                        samesite="Strict",
+                        samesite="None",
                         max_age=3600
                     )
                     response.status_code = 200
